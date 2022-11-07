@@ -14,3 +14,34 @@ Since TypeScript cannot handle type information for `.vue` imports, they are shi
 2. Reload the VS Code window by running `Developer: Reload Window` from the command palette.
 
 You can learn more about Take Over mode [here](https://github.com/johnsoncodehk/volar/discussions/471).
+
+---
+
+# 環境構築手順
+
+## ESLint&Prettier のセットアップ
+
+1. `yarn create @eslint/config`
+1. `yarn add -D prettier eslint-config-prettier vue-eslint-parser`
+1. .eslintrc.\*を下記のように修正
+   ```js:.eslintrc.*
+   "extends": [
+     ...,
+     "prettier" // 追加
+   ],
+   "parser": "vue-eslint-parser", // 修正
+   "parserOptions": {
+    ...,
+    parser: "@typescript-eslint/parser", // 追加
+   }
+   ```
+1. .vscode/settings.json を下記のように修正(or 追加)
+   ```json:.vscode/settings.json
+   {
+     "editor.defaultFormatter": "esbenp.prettier-vscode",
+     "editor.formatOnSave": true,
+     "editor.codeActionsOnSave": {
+       "source.fixAll.eslint": true
+     }
+   }
+   ```
