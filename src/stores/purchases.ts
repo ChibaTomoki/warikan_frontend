@@ -126,10 +126,20 @@ export const usePurchasesStore = defineStore('purchases', () => {
     await fetchPurchases()
     finishLoading()
   }
+  const editPurchase = async (id: string, body: any) => {
+    startLoading()
+    await axios.patch(
+      `${import.meta.env.VITE_API_URL}/api/v1/purchases/${id}`,
+      body
+    )
+    await fetchPurchases()
+    finishLoading()
+  }
 
   return {
     archivePurchase,
     archivePurchases,
+    editPurchase,
     fetchPurchases,
     getPurchasePeople,
     getPurchases,

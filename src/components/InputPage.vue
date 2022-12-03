@@ -1,4 +1,6 @@
 <script setup lang="ts">
+// TODO: 同じ名前の人を登録しようとしたときにエラーが出るように修正
+
 import { ref, watch, watchEffect } from 'vue'
 import { storeToRefs } from 'pinia'
 import { usePeopleStore } from '../stores/people'
@@ -27,11 +29,11 @@ const formRef = ref<{
 const isValid = ref(null)
 const name = ref<string | null>(null)
 const today = new Date()
-const date = ref<string | null>(
-  `${today.getFullYear()}-${('0' + (today.getMonth() + 1)).slice(-2)}-${(
-    '0' + today.getDate()
-  ).slice(-2)}`
-)
+const todayAsString = `${today.getFullYear()}-${(
+  '0' +
+  (today.getMonth() + 1)
+).slice(-2)}-${('0' + today.getDate()).slice(-2)}`
+const date = ref<string | null>(todayAsString)
 const note = ref<string | null>(null)
 const purchasePeople = ref<PurchasePersonForInput[]>([])
 const showsPostedSnackbar = ref(false)
@@ -72,6 +74,7 @@ const submit = async () => {
     )
     showsPostedSnackbar.value = true
     await form.reset()
+    date.value = todayAsString
   } catch (error) {
     console.log(error)
   }
@@ -110,29 +113,6 @@ fetchPeople()
       v-model="date"
     />
     <VTextField clearable label="メモ" v-model="note" />
-    <VDialog v-model="showsAddPersonDialog">
-      <VCard>
-        <VCardTitle>割り勘対象者を追加</VCardTitle>
-        <VCardText>
-          <VCombobox
-            v-model="personToAdd.name"
-            :items="
-              getPurchasePeople
-                .filter(
-                  (person) =>
-                    !getPeople
-                      .map((person) => person.name)
-                      .includes(person.name)
-                )
-                .map((person) => person.name)
-            "
-            label="追加する人の名前"
-            @keydown="addPersonByEnter"
-          />
-        </VCardText>
-        <VCardActions><VBtn @click="addPerson">追加</VBtn></VCardActions>
-      </VCard>
-    </VDialog>
     <div v-if="getIsLoading" class="d-flex justify-center mt-16">
       <VProgressCircular indeterminate />
     </div>
@@ -207,6 +187,27 @@ fetchPeople()
       >追加</VBtn
     >
   </VForm>
+  <VDialog v-model="showsAddPersonDialog">
+    <VCard>
+      <VCardTitle>割り勘対象者を追加</VCardTitle>
+      <VCardText>
+        <VCombobox
+          v-model="personToAdd.name"
+          :items="
+            getPurchasePeople
+              .filter(
+                (person) =>
+                  !getPeople.map((person) => person.name).includes(person.name)
+              )
+              .map((person) => person.name)
+          "
+          label="追加する人の名前"
+          @keydown="addPersonByEnter"
+        />
+      </VCardText>
+      <VCardActions><VBtn @click="addPerson">追加</VBtn></VCardActions>
+    </VCard>
+  </VDialog>
   <VSnackbar timeout="2000" v-model="showsPostedSnackbar"
     >未精算リストに追加しました。</VSnackbar
   >
