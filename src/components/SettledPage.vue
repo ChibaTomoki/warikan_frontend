@@ -9,8 +9,8 @@ const {
   archivePurchase,
   archivePurchases,
   fetchPurchases,
-  payPurchase,
-  payPurchases,
+  repayPurchase,
+  repayPurchases,
 } = usePurchasesStore()
 const { getPurchasePeople, getPurchases } = storeToRefs(usePurchasesStore())
 const { getIsLoading } = storeToRefs(useLoadingStore())
@@ -29,7 +29,6 @@ const selectedToPays = computed<{ _id: string; name: string; toPay: number }[]>(
         .reduce((previous, current) => {
           const target = current.people.find((x) => x._id === person._id)
           if (!target) return previous
-
           return previous + target.toPay - target.paid
         }, 0),
     }))
@@ -78,8 +77,8 @@ fetchPurchases()
       </div>
     </VCardText>
     <VCardActions>
-      <VBtn elevation="2" @click="payPurchases(selectedIdList)"
-        ><VIcon>mdi-check</VIcon>精算</VBtn
+      <VBtn elevation="2" @click="repayPurchases(selectedIdList)"
+        ><VIcon>mdi-check-outline</VIcon>精算前に戻す</VBtn
       >
       <VBtn elevation="2" @click="archivePurchases(selectedIdList)"
         ><VIcon>mdi-delete</VIcon>削除</VBtn
@@ -105,7 +104,7 @@ fetchPurchases()
     </thead>
     <tbody>
       <tr v-for="purchase in getPurchases" :key="purchase._id">
-        <template v-if="purchase.stage === 'Unsettled'">
+        <template v-if="purchase.stage === 'Settled'">
           <td>
             <VCheckboxBtn
               :modelValue="selectedIdList"
@@ -123,8 +122,8 @@ fetchPurchases()
             }}
           </td>
           <td>
-            <VBtn @click="payPurchase(purchase._id)"
-              ><VIcon>mdi-check</VIcon>精算</VBtn
+            <VBtn @click="repayPurchase(purchase._id)"
+              ><VIcon>mdi-check-outline</VIcon>精算前に戻す</VBtn
             >
             <VBtn @click="showEditPurchaseDialog(purchase._id)"
               ><VIcon>mdi-square-edit-outline</VIcon>編集</VBtn
