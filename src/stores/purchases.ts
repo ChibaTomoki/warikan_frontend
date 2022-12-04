@@ -3,16 +3,16 @@ import { computed, ref } from 'vue'
 import axios, { AxiosResponse } from 'axios'
 import { useLoadingStore } from '../stores/loading'
 
-type Stage = 'Unsettled' | 'Settled' | 'Archived'
-interface Person {
+export type Stage = 'Unsettled' | 'Settled' | 'Archived'
+type Person = {
   _id: string
   name: string
 }
-interface PurchasePerson extends Person {
+type PurchasePerson = Person & {
   paid: number
   toPay: number
 }
-interface Purchase {
+type Purchase = {
   _id: string
   name: string
   date: string
@@ -135,10 +135,28 @@ export const usePurchasesStore = defineStore('purchases', () => {
     await fetchPurchases()
     finishLoading()
   }
+  const deletePurchase = async (id: string) => {
+    startLoading()
+    await axios.delete(`${import.meta.env.VITE_API_URL}/api/v1/purchases/${id}`)
+    await fetchPurchases()
+    finishLoading()
+  }
+  const deletePurchases = async (idList: string[]) => {
+    startLoading()
+    await axios.delete(`${import.meta.env.VITE_API_URL}/api/v1/purchases`, {
+      data: {
+        idList,
+      },
+    })
+    await fetchPurchases()
+    finishLoading()
+  }
 
   return {
     archivePurchase,
     archivePurchases,
+    deletePurchase,
+    deletePurchases,
     editPurchase,
     fetchPurchases,
     getPurchasePeople,

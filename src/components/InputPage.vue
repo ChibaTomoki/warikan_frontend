@@ -1,17 +1,15 @@
 <script setup lang="ts">
-// TODO: 同じ名前の人を登録しようとしたときにエラーが出るように修正
-
 import { ref, watch, watchEffect } from 'vue'
 import { storeToRefs } from 'pinia'
 import { usePeopleStore } from '../stores/people'
 import { usePurchasesStore } from '../stores/purchases'
 import { useLoadingStore } from '../stores/loading'
 
-interface Person {
+type Person = {
   _id: string | null
   name: string
 }
-interface PurchasePersonForInput extends Person {
+type PurchasePersonForInput = Person & {
   _id: string
   paid: string | null
   toPay: string | null
