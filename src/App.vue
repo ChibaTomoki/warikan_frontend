@@ -3,10 +3,15 @@ import { ref } from 'vue'
 import InputPage from './components/InputPage.vue'
 import UnsettledPage from './components/UnsettledPage.vue'
 import SettledPage from './components/SettledPage.vue'
+import ArchivedPage from './components/ArchivedPage.vue'
 
 type TabName = 'Input' | 'Unsettled' | 'Settled' | 'Archived'
 
-const shownTab = ref<TabName>('Unsettled')
+const shownTab = ref<TabName>('Input')
+// TODO: 初めて開くページでfetchPurchasesを行うように修正
+// TODO: 完全に削除で確認ダイアログを出す
+// TODO: リストが空のとき、チェックボックスにチェックが入らないように修正
+// TODO: 同じ名前の人を登録しようとしたときにエラーが出るように修正
 </script>
 
 <template>
@@ -28,6 +33,9 @@ const shownTab = ref<TabName>('Unsettled')
           </VWindowItem>
           <VWindowItem value="Settled">
             <SettledPage />
+          </VWindowItem>
+          <VWindowItem value="Archived">
+            <ArchivedPage />
           </VWindowItem>
         </VWindow>
       </VSheet>

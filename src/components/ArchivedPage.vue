@@ -6,11 +6,13 @@ import PurchaseEditDialog from './PurchaseEditDialog.vue'
 import { useInputtedPurchases } from './InputtedPurchases'
 
 const {
-  archivePurchase,
-  archivePurchases,
+  deletePurchase,
+  deletePurchases,
   fetchPurchases,
   payPurchase,
   payPurchases,
+  repayPurchase,
+  repayPurchases,
 } = usePurchasesStore()
 const { getPurchases } = storeToRefs(usePurchasesStore())
 const { getIsLoading } = storeToRefs(useLoadingStore())
@@ -24,7 +26,7 @@ const {
   showsPurchaseEditDialog,
   toggleAllSelected,
   toggleSelected,
-} = useInputtedPurchases('Unsettled')
+} = useInputtedPurchases('Archived')
 
 fetchPurchases()
 </script>
@@ -54,11 +56,14 @@ fetchPurchases()
       </div>
     </VCardText>
     <VCardActions>
-      <VBtn elevation="2" @click="payPurchases(selectedIdList)"
-        ><VIcon>mdi-check</VIcon>精算</VBtn
+      <VBtn elevation="2" @click="repayPurchases(selectedIdList)"
+        ><VIcon>mdi-check-outline</VIcon>精算前に戻す</VBtn
       >
-      <VBtn elevation="2" @click="archivePurchases(selectedIdList)"
-        ><VIcon>mdi-delete</VIcon>削除</VBtn
+      <VBtn elevation="2" @click="payPurchases(selectedIdList)"
+        ><VIcon>mdi-check</VIcon>精算済に戻す</VBtn
+      >
+      <VBtn elevation="2" @click="deletePurchases(selectedIdList)"
+        ><VIcon color="red">mdi-delete</VIcon>完全に削除</VBtn
       >
     </VCardActions>
   </VCard>
@@ -81,7 +86,7 @@ fetchPurchases()
     </thead>
     <tbody>
       <tr v-for="purchase in getPurchases" :key="purchase._id">
-        <template v-if="purchase.stage === 'Unsettled'">
+        <template v-if="purchase.stage === 'Archived'">
           <td>
             <VCheckboxBtn
               :modelValue="selectedIdList"
@@ -99,14 +104,17 @@ fetchPurchases()
             }}
           </td>
           <td>
-            <VBtn @click="payPurchase(purchase._id)"
-              ><VIcon>mdi-check</VIcon>精算</VBtn
+            <VBtn @click="repayPurchase(purchase._id)"
+              ><VIcon>mdi-check-outline</VIcon>精算前に戻す</VBtn
             >
             <VBtn @click="showEditPurchaseDialog(purchase._id)"
               ><VIcon>mdi-square-edit-outline</VIcon>編集</VBtn
             >
-            <VBtn @click="archivePurchase(purchase._id)"
-              ><VIcon>mdi-delete</VIcon>削除</VBtn
+            <VBtn @click="payPurchase(purchase._id)"
+              ><VIcon>mdi-check</VIcon>精算済に戻す</VBtn
+            >
+            <VBtn @click="deletePurchase(purchase._id)"
+              ><VIcon color="red">mdi-delete</VIcon>完全に削除</VBtn
             >
           </td>
         </template>

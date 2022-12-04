@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { storeToRefs } from 'pinia'
-import { computed, ref } from 'vue'
 import { usePurchasesStore } from '../stores/purchases'
 import { useLoadingStore } from '../stores/loading'
 import PurchaseEditDialog from './PurchaseEditDialog.vue'
+import { useInputtedPurchases } from './InputtedPurchases'
 
 const {
   archivePurchase,
@@ -12,43 +12,19 @@ const {
   repayPurchase,
   repayPurchases,
 } = usePurchasesStore()
-const { getPurchasePeople, getPurchases } = storeToRefs(usePurchasesStore())
+const { getPurchases } = storeToRefs(usePurchasesStore())
 const { getIsLoading } = storeToRefs(useLoadingStore())
 
-const selectedIdList = ref<string[]>([])
-const isSelectedAll = computed<boolean>(
-  () => selectedIdList.value.length === getPurchases.value.length
-)
-const selectedToPays = computed<{ _id: string; name: string; toPay: number }[]>(
-  () =>
-    getPurchasePeople.value.map((person) => ({
-      _id: person._id,
-      name: person.name,
-      toPay: getPurchases.value
-        .filter((x) => selectedIdList.value.includes(x._id))
-        .reduce((previous, current) => {
-          const target = current.people.find((x) => x._id === person._id)
-          if (!target) return previous
-          return previous + target.toPay - target.paid
-        }, 0),
-    }))
-)
-const showsPurchaseEditDialog = ref(false)
-const idToEditPurchase = ref<string>('')
-
-const onChangeAll = () => {
-  if (isSelectedAll.value) selectedIdList.value = []
-  else selectedIdList.value = getPurchases.value.map((purchase) => purchase._id)
-}
-const onChange = (id: string) => {
-  if (selectedIdList.value.includes(id))
-    selectedIdList.value = selectedIdList.value.filter((x) => x !== id)
-  else selectedIdList.value = [...selectedIdList.value, id]
-}
-const showEditPurchaseDialog = (id: string) => {
-  showsPurchaseEditDialog.value = true
-  idToEditPurchase.value = id
-}
+const {
+  idToEditPurchase,
+  selectedIdList,
+  selectedPurchases,
+  selectsAll,
+  showEditPurchaseDialog,
+  showsPurchaseEditDialog,
+  toggleAllSelected,
+  toggleSelected,
+} = useInputtedPurchases('Settled')
 
 fetchPurchases()
 </script>
@@ -59,20 +35,21 @@ fetchPurchases()
     <VCardText>
       <div
         class="ma-4"
-        v-for="selectedToPay in selectedToPays"
-        :key="selectedToPay._id"
+        v-for="selectedPurchase in selectedPurchases"
+        :key="selectedPurchase._id"
       >
-        <template v-if="selectedToPay.toPay < 0">
-          <span style="font-size: 1.3rem">{{ selectedToPay.name }}</span>
+        <template v-if="selectedPurchase.toPay < 0">
+          <span style="font-size: 1.3rem">{{ selectedPurchase.name }}</span>
           <span>の</span>
           <span style="font-size: 1.3rem">受取る額：</span>
-          <span style="font-size: 1.3rem">{{ -selectedToPay.toPay }}</span> 円
+          <span style="font-size: 1.3rem">{{ -selectedPurchase.toPay }}</span>
+          円
         </template>
         <template v-else>
-          <span style="font-size: 1.3rem">{{ selectedToPay.name }}</span>
+          <span style="font-size: 1.3rem">{{ selectedPurchase.name }}</span>
           <span>の</span>
           <span style="font-size: 1.3rem">支払う額：</span>
-          <span style="font-size: 1.3rem">{{ selectedToPay.toPay }}</span> 円
+          <span style="font-size: 1.3rem">{{ selectedPurchase.toPay }}</span> 円
         </template>
       </div>
     </VCardText>
@@ -93,8 +70,8 @@ fetchPurchases()
       <tr>
         <th>
           <VCheckboxBtn
-            :modelValue="isSelectedAll"
-            @update:modelValue="onChangeAll"
+            :modelValue="selectsAll"
+            @update:modelValue="toggleAllSelected"
           />
         </th>
         <th>購入品</th>
@@ -108,7 +85,7 @@ fetchPurchases()
           <td>
             <VCheckboxBtn
               :modelValue="selectedIdList"
-              @update:modelValue="onChange(purchase._id)"
+              @update:modelValue="toggleSelected(purchase._id)"
               :value="purchase._id"
             />
           </td>

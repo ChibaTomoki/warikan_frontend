@@ -4,20 +4,20 @@ import { ref, watchEffect } from 'vue'
 import { useLoadingStore } from '../stores/loading'
 import { usePurchasesStore } from '../stores/purchases'
 
-interface Props {
+type Props = {
   isOpen: boolean
   purchaseId: string
 }
-interface Emits {
+type Emits = {
   (e: 'close'): void
 }
 
 type Stage = 'Unsettled' | 'Settled' | 'Archived'
-interface Person {
+type Person = {
   _id: string | null
   name: string
 }
-interface PurchasePerson extends Person {
+type PurchasePerson = Person & {
   _id: string
   paid: number
   toPay: number
