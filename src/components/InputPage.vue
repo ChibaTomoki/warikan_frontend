@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, watch, watchEffect } from 'vue'
+import { computed, ref, watch, watchEffect } from 'vue'
 import { storeToRefs } from 'pinia'
 import { usePeopleStore } from '../stores/people'
 import { usePurchasesStore } from '../stores/purchases'
@@ -11,20 +11,21 @@ type Person = {
 }
 type PurchasePersonForInput = Person & {
   _id: string
-  paid: string | null
-  toPay: string | null
+  paid: number | null
+  toPay: number | null
 }
 
 const { deletePerson, fetchPeople, postPerson } = usePeopleStore()
 const { getPeople } = storeToRefs(usePeopleStore())
-const { postPurchase } = usePurchasesStore()
+const { fetchPurchases, postPurchase } = usePurchasesStore()
 const { getPurchasePeople } = storeToRefs(usePurchasesStore())
 const { getIsLoading } = storeToRefs(useLoadingStore())
 const formRef = ref<{
   validate: () => Promise<void>
   reset: () => Promise<void>
+  resetValidation: () => Promise<void>
 }>()
-const isValid = ref(null)
+const canSubmit = ref(null)
 const name = ref<string | null>(null)
 const today = new Date()
 const todayAsString = `${today.getFullYear()}-${(
@@ -38,12 +39,33 @@ const showsPostedSnackbar = ref(false)
 const showsAddPersonDialog = ref(false)
 const personToAdd = ref<Person>({ _id: null, name: '' })
 
+const paidSum = computed<number>(() =>
+  purchasePeople.value.reduce(
+    (paidSum, person) => paidSum + (person.paid ?? 0),
+    0
+  )
+)
+const toPaySum = computed<number>(() =>
+  purchasePeople.value.reduce(
+    (toPaySum, person) => toPaySum + (person.toPay ?? 0),
+    0
+  )
+)
+/** 払うべき額の合計を等分した値 */
+const aliquotToPay = computed<number>(() =>
+  Math.floor(paidSum.value / purchasePeople.value.length)
+)
+/** 払うべき額の合計を等分して出た余りの値 */
+const remainderToPay = computed<number>(
+  () => paidSum.value - aliquotToPay.value * purchasePeople.value.length
+)
+
 watchEffect(() => {
   purchasePeople.value = getPeople.value.map((person) => ({
     _id: person._id,
     name: person.name,
-    paid: '',
-    toPay: '',
+    paid: 0,
+    toPay: 0,
   }))
 })
 
@@ -56,7 +78,7 @@ const submit = async () => {
   if (!form) return
 
   await form.validate()
-  if (isValid.value === false) return
+  if (canSubmit.value === false) return
   try {
     if (!name.value) throw '購入品が不正です'
     if (!date.value) throw '日付が不正です'
@@ -89,12 +111,49 @@ const addPersonByEnter = (e: Event) => {
   if (!(e instanceof KeyboardEvent)) return
   if (e.key === 'Enter') addPerson()
 }
+const format = (value: string): string => {
+  if (!value) return '0'
+  return [...value]
+    .filter((char: string) => char.match(/\d/))
+    .reduce((previous: string, current: string) => {
+      if ((previous + current).match(/^0\d/)) return current
+      if ((previous + current).match(/^\d{16}/)) return previous
+      return previous + current
+    }, '')
+}
+const inputPaid = (id: string, value: string) => {
+  const target = purchasePeople.value.find((person) => person._id === id)
+  if (!target) return
+
+  target.paid = Number(format(value))
+
+  let remainder = remainderToPay.value
+  purchasePeople.value.forEach((person, index) => {
+    const remainingPeopleNum = purchasePeople.value.length - index
+    const OneOrZero = Math.random() < remainder / remainingPeopleNum ? 1 : 0
+    if (OneOrZero) remainder--
+    person.toPay = aliquotToPay.value + OneOrZero
+  })
+
+  if (!formRef.value) return
+  formRef.value.resetValidation()
+}
+const inputToPay = (id: string, value: string) => {
+  const target = purchasePeople.value.find((person) => person._id === id)
+  if (!target) return
+
+  target.toPay = Number(format(value))
+
+  if (!formRef.value) return
+  formRef.value.resetValidation()
+}
 
 fetchPeople()
+fetchPurchases()
 </script>
 
 <template>
-  <VForm v-model="isValid" ref="formRef">
+  <VForm v-model="canSubmit" ref="formRef">
     <VTextField
       clearable
       label="購入品"
@@ -128,17 +187,14 @@ fetchPeople()
             class="d-flex align-center"
           >
             <VTextField
+              :hint="String(person.paid)"
               :label="person.name"
-              :rules="[
-                (v) => !isNaN(Number(v)) || '半角数字のみ入力してください',
-                (v) => !/e|\.|-/.test(v) || '半角数字のみ入力してください',
-                (v) => !v || v.length < 16 || '15桁以内で入力してください',
-              ]"
+              :model-value="person.paid"
+              @update:model-value="(value) => inputPaid(person._id, value)"
               clearable
               counter="15"
               placeholder="0"
               suffix="円"
-              v-model="person.paid"
             />
             <VBtn @click="deletePerson(person._id)"
               ><VIcon>mdi-account-minus</VIcon></VBtn
@@ -148,7 +204,7 @@ fetchPeople()
       </VCard>
       <VCard class="my-8">
         <VCardTitle class="d-flex justify-space-between"
-          >割り勘金額<VBtn @click="showsAddPersonDialog = true"
+          >割勘金額<VBtn @click="showsAddPersonDialog = true"
             ><VIcon>mdi-account-plus</VIcon></VBtn
           ></VCardTitle
         >
@@ -159,17 +215,18 @@ fetchPeople()
             class="d-flex align-center"
           >
             <VTextField
+              :hint="String(person.toPay)"
               :label="person.name"
+              :model-value="person.toPay"
               :rules="[
-                (v) => !isNaN(Number(v)) || '半角数字のみ入力してください',
-                (v) => !/e|\.|-/.test(v) || '半角数字のみ入力してください',
-                (v) => !v || v.length < 16 || '15桁以内で入力してください',
+                paidSum === toPaySum ||
+                  '支払額と割勘金額の合計が一致していません',
               ]"
+              @update:model-value="(value) => inputToPay(person._id, value)"
               clearable
               counter="15"
               placeholder="0"
               suffix="円"
-              v-model="person.toPay"
             />
             <VBtn @click="deletePerson(person._id)"
               ><VIcon>mdi-account-minus</VIcon></VBtn
@@ -180,7 +237,7 @@ fetchPeople()
     </template>
     <VBtn
       color="green"
-      :disabled="isValid === false || getIsLoading"
+      :disabled="canSubmit === false || getIsLoading"
       @click="submit"
       >追加</VBtn
     >
