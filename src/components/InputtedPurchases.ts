@@ -9,7 +9,8 @@ export const useInputtedPurchases = (stage: Stage) => {
   const selectsAll = computed<boolean>(
     () =>
       selectedIdList.value.length ===
-      getPurchases.value.filter((x) => x.stage === stage).length
+        getPurchases.value.filter((x) => x.stage === stage).length &&
+      !!selectedIdList.value.length
   )
   const selectedPurchases = computed<
     { _id: string; name: string; toPay: number }[]
