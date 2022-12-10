@@ -25,7 +25,11 @@ const formRef = ref<{
   reset: () => Promise<void>
   resetValidation: () => Promise<void>
 }>()
-const canSubmit = ref(null)
+const addPersonFormRef = ref<{
+  validate: () => Promise<void>
+}>()
+const canSubmit = ref<boolean | null>(null)
+const canSubmitToAddPerson = ref<boolean | null>(null)
 const name = ref<string | null>(null)
 const today = new Date()
 const todayAsString = `${today.getFullYear()}-${(
@@ -73,7 +77,7 @@ watch(showsAddPersonDialog, () => {
   if (showsAddPersonDialog.value) personToAdd.value = { _id: null, name: '' }
 })
 
-const submit = async () => {
+const addPurchase = async () => {
   const form = formRef.value
   if (!form) return
 
@@ -99,7 +103,13 @@ const submit = async () => {
     console.log(error)
   }
 }
-const addPerson = () => {
+const addPerson = async () => {
+  const form = addPersonFormRef.value
+  if (!form) return
+
+  await form.validate()
+  if (canSubmitToAddPerson.value === false) return
+
   const target = getPurchasePeople.value.find(
     (person) => person.name === personToAdd.value.name
   )
@@ -238,30 +248,48 @@ fetchPurchases()
     <VBtn
       color="green"
       :disabled="canSubmit === false || getIsLoading"
-      @click="submit"
+      @click="addPurchase"
       >追加</VBtn
     >
   </VForm>
   <VDialog v-model="showsAddPersonDialog">
-    <VCard>
-      <VCardTitle>割り勘対象者を追加</VCardTitle>
-      <VCardText>
-        <VCombobox
-          v-model="personToAdd.name"
-          :items="
-            getPurchasePeople
-              .filter(
-                (person) =>
-                  !getPeople.map((person) => person.name).includes(person.name)
-              )
-              .map((person) => person.name)
-          "
-          label="追加する人の名前"
-          @keydown="addPersonByEnter"
-        />
-      </VCardText>
-      <VCardActions><VBtn @click="addPerson">追加</VBtn></VCardActions>
-    </VCard>
+    <VForm v-model="canSubmitToAddPerson" ref="addPersonFormRef">
+      <VCard>
+        <VCardTitle>割り勘対象者を追加</VCardTitle>
+        <VCardText>
+          <VCombobox
+            v-model="personToAdd.name"
+            :items="
+              getPurchasePeople
+                .filter(
+                  (person) =>
+                    !getPeople
+                      .map((person) => person.name)
+                      .includes(person.name)
+                )
+                .map((person) => person.name)
+            "
+            label="追加する人の名前"
+            @keydown="addPersonByEnter"
+            :rules="[
+              (v) => !!v || '必須項目です',
+              (v) =>
+                !getPeople.some((person) => person.name === v) ||
+                '同じ名前の人は登録できません',
+            ]"
+          />
+        </VCardText>
+        <VCardActions
+          ><VBtn
+            :disabled="canSubmitToAddPerson === false || getIsLoading"
+            @click="addPerson"
+            >追加</VBtn
+          ><VBtn @click="showsAddPersonDialog = false"
+            >キャンセル</VBtn
+          ></VCardActions
+        >
+      </VCard>
+    </VForm>
   </VDialog>
   <VSnackbar timeout="2000" v-model="showsPostedSnackbar"
     >未精算リストに追加しました。</VSnackbar
