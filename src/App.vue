@@ -10,8 +10,6 @@ type TabName = 'Input' | 'Unsettled' | 'Settled' | 'Archived'
 const shownTab = ref<TabName>('Input')
 // TODO: 初めて開くページでfetchPurchasesを行うように修正
 // TODO: 完全に削除で確認ダイアログを出す
-// TODO: リストが空のとき、チェックボックスにチェックが入らないように修正
-// TODO: 同じ名前の人を登録しようとしたときにエラーが出るように修正
 </script>
 
 <template>
