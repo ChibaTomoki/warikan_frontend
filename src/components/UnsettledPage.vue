@@ -75,6 +75,7 @@ fetchPurchases()
           />
         </th>
         <th>購入品</th>
+        <th>購入日</th>
         <th>合計金額</th>
         <th></th>
       </tr>
@@ -90,6 +91,7 @@ fetchPurchases()
             />
           </td>
           <td>{{ purchase.name }}</td>
+          <td>{{ purchase.date }}</td>
           <td>
             {{
               purchase.people.reduce(

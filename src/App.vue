@@ -10,6 +10,7 @@ type TabName = 'Input' | 'Unsettled' | 'Settled' | 'Archived'
 const shownTab = ref<TabName>('Input')
 // TODO: 初めて開くページでfetchPurchasesを行うように修正
 // TODO: 完全に削除で確認ダイアログを出す
+// TODO: ツールチップでより詳細な情報を表示
 </script>
 
 <template>
