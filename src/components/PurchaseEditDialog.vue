@@ -119,7 +119,7 @@ const submit = async () => {
           <VProgressCircular indeterminate />
         </div>
         <template v-else>
-          <VCard class="my-8">
+          <VCard class="ma-2" elevation="4">
             <VCardTitle class="d-flex justify-space-between">支払額</VCardTitle>
             <VCardText>
               <div
@@ -143,7 +143,7 @@ const submit = async () => {
               </div>
             </VCardText>
           </VCard>
-          <VCard class="my-8">
+          <VCard class="ma-2" elevation="4">
             <VCardTitle class="d-flex justify-space-between"
               >割り勘金額</VCardTitle
             >

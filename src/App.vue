@@ -22,22 +22,20 @@ const shownTab = ref<TabName>('Input')
         <VTab value="Settled"><VIcon>mdi-check-bold</VIcon>精算済</VTab>
         <VTab value="Archived"><VIcon>mdi-delete</VIcon>削除済</VTab>
       </VTabs>
-      <VSheet class="pa-4" elevation="8">
-        <VWindow v-model="shownTab" class="pt-8">
-          <VWindowItem value="Input">
-            <InputPage />
-          </VWindowItem>
-          <VWindowItem value="Unsettled">
-            <UnsettledPage />
-          </VWindowItem>
-          <VWindowItem value="Settled">
-            <SettledPage />
-          </VWindowItem>
-          <VWindowItem value="Archived">
-            <ArchivedPage />
-          </VWindowItem>
-        </VWindow>
-      </VSheet>
+      <VWindow v-model="shownTab" class="pt-8">
+        <VWindowItem value="Input">
+          <InputPage />
+        </VWindowItem>
+        <VWindowItem value="Unsettled">
+          <UnsettledPage />
+        </VWindowItem>
+        <VWindowItem value="Settled">
+          <SettledPage />
+        </VWindowItem>
+        <VWindowItem value="Archived">
+          <ArchivedPage />
+        </VWindowItem>
+      </VWindow>
     </VMain>
   </VApp>
 </template>
