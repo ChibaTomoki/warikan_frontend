@@ -184,7 +184,7 @@ fetchPurchases()
       <VProgressCircular indeterminate />
     </div>
     <template v-else>
-      <VCard class="my-8">
+      <VCard class="ma-2" elevation="4">
         <VCardTitle class="d-flex justify-space-between"
           >支払額<VBtn @click="showsAddPersonDialog = true"
             ><VIcon>mdi-account-plus</VIcon></VBtn
@@ -212,7 +212,7 @@ fetchPurchases()
           </div>
         </VCardText>
       </VCard>
-      <VCard class="my-8">
+      <VCard class="ma-2" elevation="4">
         <VCardTitle class="d-flex justify-space-between"
           >割勘金額<VBtn @click="showsAddPersonDialog = true"
             ><VIcon>mdi-account-plus</VIcon></VBtn

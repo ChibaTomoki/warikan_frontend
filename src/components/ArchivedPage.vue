@@ -32,7 +32,7 @@ fetchPurchases()
 </script>
 
 <template>
-  <VCard>
+  <VCard class="ma-2" elevation="4">
     <VCardTitle>選択中の購入品の精算額</VCardTitle>
     <VCardText>
       <div
