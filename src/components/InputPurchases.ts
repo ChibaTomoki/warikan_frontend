@@ -2,7 +2,7 @@ import { storeToRefs } from 'pinia'
 import { computed, ref } from 'vue'
 import { Stage, usePurchasesStore } from '../stores/purchases'
 
-export const useInputtedPurchases = (stage: Stage) => {
+export const useInputPurchases = (stage: Stage) => {
   const { getPurchasePeople, getPurchases } = storeToRefs(usePurchasesStore())
 
   const selectedIdList = ref<string[]>([])

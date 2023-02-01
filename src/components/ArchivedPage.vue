@@ -3,7 +3,7 @@ import { storeToRefs } from 'pinia'
 import { usePurchasesStore } from '../stores/purchases'
 import { useLoadingStore } from '../stores/loading'
 import PurchaseEditDialog from './PurchaseEditDialog.vue'
-import { useInputtedPurchases } from './InputtedPurchases'
+import { useInputPurchases } from './InputPurchases'
 
 const {
   deletePurchase,
@@ -26,7 +26,7 @@ const {
   showsPurchaseEditDialog,
   toggleAllSelected,
   toggleSelected,
-} = useInputtedPurchases('Archived')
+} = useInputPurchases('Archived')
 
 fetchPurchases()
 </script>
