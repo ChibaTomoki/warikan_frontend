@@ -197,12 +197,10 @@ fetchPurchases()
             class="d-flex align-center"
           >
             <VTextField
-              :hint="String(person.paid)"
               :label="person.name"
               :model-value="person.paid"
               @update:model-value="(value) => inputPaid(person._id, value)"
               clearable
-              counter="15"
               placeholder="0"
               suffix="円"
             />
@@ -225,7 +223,6 @@ fetchPurchases()
             class="d-flex align-center"
           >
             <VTextField
-              :hint="String(person.toPay)"
               :label="person.name"
               :model-value="person.toPay"
               :rules="[
@@ -234,7 +231,6 @@ fetchPurchases()
               ]"
               @update:model-value="(value) => inputToPay(person._id, value)"
               clearable
-              counter="15"
               placeholder="0"
               suffix="円"
             />
