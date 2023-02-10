@@ -135,9 +135,9 @@ const submit = async () => {
                     (v) => !v || v.length < 16 || '15桁以内で入力してください',
                   ]"
                   clearable
-                  counter="15"
                   placeholder="0"
                   suffix="円"
+                  type="number"
                   v-model="person.paid"
                 />
               </div>
@@ -161,9 +161,9 @@ const submit = async () => {
                     (v) => !v || v.length < 16 || '15桁以内で入力してください',
                   ]"
                   clearable
-                  counter="15"
                   placeholder="0"
                   suffix="円"
+                  type="number"
                   v-model="person.toPay"
                 />
               </div>

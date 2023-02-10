@@ -201,9 +201,9 @@ fetchPurchases()
               :model-value="person.paid"
               @update:model-value="(value) => inputPaid(person._id, value)"
               clearable
-              inputmode="numeric"
               placeholder="0"
               suffix="円"
+              type="number"
             />
             <VBtn @click="deletePerson(person._id)"
               ><VIcon>mdi-account-minus</VIcon></VBtn
