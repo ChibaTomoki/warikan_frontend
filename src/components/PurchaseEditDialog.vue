@@ -132,7 +132,10 @@ const submit = async () => {
                   :rules="[
                     (v) => !isNaN(Number(v)) || '半角数字のみ入力してください',
                     (v) => !/e|\.|-/.test(v) || '半角数字のみ入力してください',
-                    (v) => !v || v.length < 16 || '15桁以内で入力してください',
+                    (v) =>
+                      !v ||
+                      String(v).length < 16 ||
+                      '15桁以内で入力してください',
                   ]"
                   clearable
                   placeholder="0"
@@ -158,7 +161,10 @@ const submit = async () => {
                   :rules="[
                     (v) => !isNaN(Number(v)) || '半角数字のみ入力してください',
                     (v) => !/e|\.|-/.test(v) || '半角数字のみ入力してください',
-                    (v) => !v || v.length < 16 || '15桁以内で入力してください',
+                    (v) =>
+                      !v ||
+                      String(v).length < 16 ||
+                      '15桁以内で入力してください',
                   ]"
                   clearable
                   placeholder="0"
