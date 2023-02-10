@@ -16,13 +16,7 @@ const shownTab = ref<TabName>('Input')
 <template>
   <VApp>
     <VMain class="pa-2">
-      <VTabs color="green" v-model="shownTab" centered>
-        <VTab value="Input"><VIcon>mdi-pencil</VIcon>入力欄</VTab>
-        <VTab value="Unsettled"><VIcon>mdi-check-outline</VIcon>未精算</VTab>
-        <VTab value="Settled"><VIcon>mdi-check-bold</VIcon>精算済</VTab>
-        <VTab value="Archived"><VIcon>mdi-delete</VIcon>削除済</VTab>
-      </VTabs>
-      <VWindow v-model="shownTab" class="pt-8">
+      <VWindow v-model="shownTab" class="pt-8" :touch="false">
         <VWindowItem value="Input">
           <InputPage />
         </VWindowItem>
@@ -37,5 +31,23 @@ const shownTab = ref<TabName>('Input')
         </VWindowItem>
       </VWindow>
     </VMain>
+    <v-bottom-navigation v-model="shownTab">
+      <v-btn value="Input">
+        <v-icon>mdi-pencil</v-icon>
+        入力欄
+      </v-btn>
+      <v-btn value="Unsettled">
+        <v-icon>mdi-check-outline</v-icon>
+        未精算
+      </v-btn>
+      <v-btn value="Settled">
+        <v-icon>mdi-check-bold</v-icon>
+        精算済
+      </v-btn>
+      <v-btn value="Archived">
+        <v-icon>mdi-delete</v-icon>
+        削除済
+      </v-btn>
+    </v-bottom-navigation>
   </VApp>
 </template>
