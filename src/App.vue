@@ -15,7 +15,7 @@ const shownTab = ref<TabName>('Input')
 
 <template>
   <VApp>
-    <VMain class="pa-2">
+    <VMain class="px-2">
       <VWindow v-model="shownTab" class="pt-8" :touch="false">
         <VWindowItem value="Input">
           <InputPage />

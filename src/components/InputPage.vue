@@ -163,7 +163,7 @@ fetchPurchases()
 </script>
 
 <template>
-  <VForm v-model="canSubmit" ref="formRef">
+  <VForm v-model="canSubmit" ref="formRef" class="pb-4">
     <VTextField
       clearable
       label="購入品"
@@ -247,6 +247,7 @@ fetchPurchases()
       color="green"
       :disabled="canSubmit === false || getIsLoading"
       @click="addPurchase"
+      block
       >追加</VBtn
     >
   </VForm>
