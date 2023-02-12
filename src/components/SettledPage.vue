@@ -95,7 +95,7 @@ fetchPurchases()
           <td>
             {{
               purchase.people.reduce(
-                (previous, current) => previous + current.paid,
+                (previous, current) => previous + Number(current.paid),
                 0
               )
             }}

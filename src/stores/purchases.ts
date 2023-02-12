@@ -9,8 +9,8 @@ type Person = {
   name: string
 }
 type PurchasePerson = Person & {
-  paid: number
-  toPay: number
+  paid: string
+  toPay: string
 }
 type Purchase = {
   _id: string
@@ -22,6 +22,7 @@ type Purchase = {
 }
 
 export const usePurchasesStore = defineStore('purchases', () => {
+  // ここをリアクティブにする必要がないかも
   const purchases = ref<Purchase[]>([])
   const getPurchases = computed<Purchase[]>(() => purchases.value)
   const getPurchasePeople = computed<PurchasePerson[]>(() => {

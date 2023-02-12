@@ -11,8 +11,8 @@ type Person = {
 }
 type PurchasePersonForInput = Person & {
   _id: string
-  paid: number | null
-  toPay: number | null
+  paid: string | null
+  toPay: string | null
 }
 
 const { deletePerson, fetchPeople, postPerson } = usePeopleStore()
@@ -45,13 +45,13 @@ const personToAdd = ref<Person>({ _id: null, name: '' })
 
 const paidSum = computed<number>(() =>
   purchasePeople.value.reduce(
-    (paidSum, person) => paidSum + (person.paid ?? 0),
+    (paidSum, person) => paidSum + (person.paid ? Number(person.paid) : 0),
     0
   )
 )
 const toPaySum = computed<number>(() =>
   purchasePeople.value.reduce(
-    (toPaySum, person) => toPaySum + (person.toPay ?? 0),
+    (toPaySum, person) => toPaySum + (person.toPay ? Number(person.toPay) : 0),
     0
   )
 )
@@ -68,8 +68,8 @@ watchEffect(() => {
   purchasePeople.value = getPeople.value.map((person) => ({
     _id: person._id,
     name: person.name,
-    paid: 0,
-    toPay: 0,
+    paid: null,
+    toPay: null,
   }))
 })
 
@@ -83,6 +83,7 @@ const addPurchase = async () => {
 
   await form.validate()
   if (canSubmit.value === false) return
+
   try {
     if (!name.value) throw '購入品が不正です'
     if (!date.value) throw '日付が不正です'
@@ -119,42 +120,34 @@ const addPerson = async () => {
 }
 const addPersonByEnter = (e: Event) => {
   if (!(e instanceof KeyboardEvent)) return
+
   if (e.key === 'Enter') addPerson()
 }
-const format = (value: string): string => {
-  if (!value) return '0'
-  return [...value]
-    .filter((char: string) => char.match(/\d/))
-    .reduce((previous: string, current: string) => {
-      if ((previous + current).match(/^0\d/)) return current
-      if ((previous + current).match(/^\d{16}/)) return previous
-      return previous + current
-    }, '')
-}
-const inputPaid = (id: string, value: string) => {
+const isNumber = (value: string): boolean => /^\d+$/.test(value)
+const hasFirstZero = (value: string): boolean => /^0/.test(value)
+const paidOnInput = (id: string, value: string) => {
   const target = purchasePeople.value.find((person) => person._id === id)
   if (!target) return
 
-  target.paid = Number(format(value))
-
+  target.paid = value
   let remainder = remainderToPay.value
   purchasePeople.value.forEach((person, index) => {
     const remainingPeopleNum = purchasePeople.value.length - index
     const OneOrZero = Math.random() < remainder / remainingPeopleNum ? 1 : 0
     if (OneOrZero) remainder--
-    person.toPay = aliquotToPay.value + OneOrZero
+    person.toPay = String(aliquotToPay.value + OneOrZero)
   })
-
   if (!formRef.value) return
+
   formRef.value.resetValidation()
 }
-const inputToPay = (id: string, value: string) => {
+const toPayOnInput = (id: string, value: string) => {
   const target = purchasePeople.value.find((person) => person._id === id)
   if (!target) return
 
-  target.toPay = Number(format(value))
-
+  target.toPay = value
   if (!formRef.value) return
+
   formRef.value.resetValidation()
 }
 
@@ -199,11 +192,21 @@ fetchPurchases()
             <VTextField
               :label="person.name"
               :model-value="person.paid"
-              @update:model-value="(value) => inputPaid(person._id, value)"
+              :rules="[
+                (v) => !v || isNumber(v) || '半角数字のみを入力してください',
+                (v) =>
+                  !v ||
+                  v.length === 1 ||
+                  !hasFirstZero(v ?? '0') ||
+                  '先頭は0以外の数字を入力してください',
+                (v) =>
+                  !v || v.length < 16 || '文字数は15文字以下にしてください',
+              ]"
+              @update:model-value="(value) => paidOnInput(person._id, value)"
               clearable
+              inputmode="numeric"
               placeholder="0"
               suffix="円"
-              type="number"
             />
             <VBtn @click="deletePerson(person._id)"
               ><VIcon>mdi-account-minus</VIcon></VBtn
@@ -227,14 +230,22 @@ fetchPurchases()
               :label="person.name"
               :model-value="person.toPay"
               :rules="[
+                (v) => !v || isNumber(v) || '半角数字のみを入力してください',
+                (v) =>
+                  !v ||
+                  v.length === 1 ||
+                  !hasFirstZero(v ?? '0') ||
+                  '先頭は0以外の数字を入力してください',
+                (v) =>
+                  !v || v.length < 16 || '文字数は15文字以下にしてください',
                 paidSum === toPaySum ||
                   '支払額と割勘金額の合計が一致していません',
               ]"
-              @update:model-value="(value) => inputToPay(person._id, value)"
+              @update:model-value="(value) => toPayOnInput(person._id, value)"
               clearable
+              inputmode="numeric"
               placeholder="0"
               suffix="円"
-              type="number"
             />
             <VBtn @click="deletePerson(person._id)"
               ><VIcon>mdi-account-minus</VIcon></VBtn

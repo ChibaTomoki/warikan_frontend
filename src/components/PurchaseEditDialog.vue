@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { storeToRefs } from 'pinia'
-import { ref, watchEffect } from 'vue'
+import { computed, ref, watch } from 'vue'
 import { useLoadingStore } from '../stores/loading'
 import { usePurchasesStore } from '../stores/purchases'
 
@@ -19,8 +19,8 @@ type Person = {
 }
 type PurchasePerson = Person & {
   _id: string
-  paid: number
-  toPay: number
+  paid: string | null
+  toPay: string | null
 }
 
 const props = defineProps<Props>()
@@ -30,15 +30,14 @@ const { getPurchases } = storeToRefs(usePurchasesStore())
 const { editPurchase } = usePurchasesStore()
 const { getIsLoading } = storeToRefs(useLoadingStore())
 
+let targetPurchase = getPurchases.value.find(
+  (purchase) => purchase._id === props.purchaseId
+)
 const isValid = ref(null)
 const formRef = ref<{
   validate: () => Promise<void>
   reset: () => Promise<void>
 }>()
-// watchEffectと重複している可能性あり
-const targetPurchase = ref(
-  getPurchases.value.find((purchase) => purchase._id === props.purchaseId)
-)
 const name = ref<string | null>(null)
 const today = new Date()
 const todayAsString = `${today.getFullYear()}-${(
@@ -50,19 +49,38 @@ const note = ref<string | null>(null)
 const purchasePeople = ref<PurchasePerson[]>([])
 const stage = ref<Stage>('Unsettled')
 
-watchEffect(() => {
-  targetPurchase.value = getPurchases.value.find(
-    (purchase) => purchase._id === props.purchaseId
+const paidSum = computed<number>(() =>
+  purchasePeople.value.reduce(
+    (paidSum, person) => paidSum + (person.paid ? Number(person.paid) : 0),
+    0
   )
-  if (!targetPurchase.value) return
+)
+const toPaySum = computed<number>(() =>
+  purchasePeople.value.reduce(
+    (toPaySum, person) => toPaySum + (person.toPay ? Number(person.toPay) : 0),
+    0
+  )
+)
 
-  name.value = targetPurchase.value.name
-  date.value = targetPurchase.value.date
-  note.value = targetPurchase.value.note
-  purchasePeople.value = targetPurchase.value.people
-  stage.value = targetPurchase.value.stage
-})
+watch(
+  () => props.isOpen,
+  () => {
+    targetPurchase = getPurchases.value.find(
+      (purchase) => purchase._id === props.purchaseId
+    )
+    if (!targetPurchase) return
 
+    name.value = targetPurchase.name
+    date.value = targetPurchase.date
+    note.value = targetPurchase.note
+    // 同じ購入品のダイアログを開きなおしたときに前回の値を引き継がないようにするため(オブジェクトの参照を渡してしまうと引き継いでしまう)
+    purchasePeople.value = targetPurchase.people.map((x) => ({ ...x }))
+    stage.value = targetPurchase.stage
+  }
+)
+
+const isNumber = (value: string): boolean => /^\d+$/.test(value)
+const hasFirstZero = (value: string): boolean => /^0/.test(value)
 const submit = async () => {
   const form = formRef.value
   if (!form) return
@@ -130,17 +148,22 @@ const submit = async () => {
                 <VTextField
                   :label="person.name"
                   :rules="[
-                    (v) => !isNaN(Number(v)) || '半角数字のみ入力してください',
-                    (v) => !/e|\.|-/.test(v) || '半角数字のみ入力してください',
+                    (v) =>
+                      !v || isNumber(v) || '半角数字のみを入力してください',
                     (v) =>
                       !v ||
-                      String(v).length < 16 ||
-                      '15桁以内で入力してください',
+                      v.length === 1 ||
+                      !hasFirstZero(v ?? '0') ||
+                      '先頭は0以外の数字を入力してください',
+                    (v) =>
+                      !v || v.length < 16 || '文字数は15文字以下にしてください',
+                    paidSum === toPaySum ||
+                      '支払額と割勘金額の合計が一致していません',
                   ]"
                   clearable
+                  inputmode="numeric"
                   placeholder="0"
                   suffix="円"
-                  type="number"
                   v-model="person.paid"
                 />
               </div>
@@ -159,17 +182,22 @@ const submit = async () => {
                 <VTextField
                   :label="person.name"
                   :rules="[
-                    (v) => !isNaN(Number(v)) || '半角数字のみ入力してください',
-                    (v) => !/e|\.|-/.test(v) || '半角数字のみ入力してください',
+                    (v) =>
+                      !v || isNumber(v) || '半角数字のみを入力してください',
                     (v) =>
                       !v ||
-                      String(v).length < 16 ||
-                      '15桁以内で入力してください',
+                      v.length === 1 ||
+                      !hasFirstZero(v ?? '0') ||
+                      '先頭は0以外の数字を入力してください',
+                    (v) =>
+                      !v || v.length < 16 || '文字数は15文字以下にしてください',
+                    paidSum === toPaySum ||
+                      '支払額と割勘金額の合計が一致していません',
                   ]"
                   clearable
+                  inputmode="numeric"
                   placeholder="0"
                   suffix="円"
-                  type="number"
                   v-model="person.toPay"
                 />
               </div>

@@ -24,7 +24,7 @@ export const useInputPurchases = (stage: Stage) => {
           const target = current.people.find((x) => x._id === person._id)
           if (!target) return previous
 
-          return previous + target.toPay - target.paid
+          return previous + Number(target.toPay) - Number(target.paid)
         }, 0),
     }))
   )
