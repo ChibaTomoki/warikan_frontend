@@ -8,16 +8,16 @@ type Person = {
   _id: string
   name: string
 }
-type PurchasePerson = Person & {
+export type Purchaser = Person & {
   paid: string
   toPay: string
 }
-type Purchase = {
+export type Purchase = {
   _id: string
   name: string
   date: string
   note: string
-  people: PurchasePerson[]
+  people: Purchaser[]
   stage: Stage
 }
 
@@ -25,7 +25,7 @@ export const usePurchasesStore = defineStore('purchases', () => {
   // ここをリアクティブにする必要がないかも
   const purchases = ref<Purchase[]>([])
   const getPurchases = computed<Purchase[]>(() => purchases.value)
-  const getPurchasePeople = computed<PurchasePerson[]>(() => {
+  const getPurchasePeople = computed<Purchaser[]>(() => {
     const purchasePeopleMapper = new Map()
     getPurchases.value.forEach((purchase) => {
       purchase.people.forEach((person) => {

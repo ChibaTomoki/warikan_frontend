@@ -9,7 +9,7 @@ type Person = {
   _id: string | null
   name: string
 }
-type PurchasePersonForInput = Person & {
+type PurchaserForInput = Person & {
   _id: string
   paid: string | null
   toPay: string | null
@@ -38,7 +38,7 @@ const todayAsString = `${today.getFullYear()}-${(
 ).slice(-2)}-${('0' + today.getDate()).slice(-2)}`
 const date = ref<string | null>(todayAsString)
 const note = ref<string | null>(null)
-const purchasePeople = ref<PurchasePersonForInput[]>([])
+const purchasePeople = ref<PurchaserForInput[]>([])
 const showsPostedSnackbar = ref(false)
 const showsAddPersonDialog = ref(false)
 const personToAdd = ref<Person>({ _id: null, name: '' })
