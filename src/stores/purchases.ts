@@ -2,12 +2,9 @@ import { defineStore } from 'pinia'
 import { computed, ref } from 'vue'
 import axios, { AxiosResponse } from 'axios'
 import { useLoadingStore } from '../stores/loading'
+import { Person } from './people'
 
 export type Stage = 'Unsettled' | 'Settled' | 'Archived'
-type Person = {
-  _id: string
-  name: string
-}
 export type Purchaser = Person & {
   paid: string
   toPay: string
@@ -22,7 +19,6 @@ export type Purchase = {
 }
 
 export const usePurchasesStore = defineStore('purchases', () => {
-  // ここをリアクティブにする必要がないかも
   const purchases = ref<Purchase[]>([])
   const getPurchases = computed<Purchase[]>(() => purchases.value)
   const getPurchasePeople = computed<Purchaser[]>(() => {

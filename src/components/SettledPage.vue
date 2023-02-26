@@ -54,10 +54,10 @@ fetchPurchases()
       </div>
     </VCardText>
     <VCardActions>
-      <VBtn elevation="2" @click="repayPurchases(selectedIdList)"
+      <VBtn elevation="2" @click="() => repayPurchases(selectedIdList)"
         ><VIcon>mdi-check-outline</VIcon>精算前に戻す</VBtn
       >
-      <VBtn elevation="2" @click="archivePurchases(selectedIdList)"
+      <VBtn elevation="2" @click="() => archivePurchases(selectedIdList)"
         ><VIcon>mdi-delete</VIcon>削除</VBtn
       >
     </VCardActions>
@@ -101,13 +101,13 @@ fetchPurchases()
             }}
           </td>
           <td>
-            <VBtn @click="repayPurchase(purchase._id)"
+            <VBtn @click="() => repayPurchase(purchase._id)"
               ><VIcon>mdi-check-outline</VIcon>精算前に戻す</VBtn
             >
-            <VBtn @click="showEditPurchaseDialog(purchase._id)"
+            <VBtn @click="() => showEditPurchaseDialog(purchase._id)"
               ><VIcon>mdi-square-edit-outline</VIcon>編集</VBtn
             >
-            <VBtn @click="archivePurchase(purchase._id)"
+            <VBtn @click="() => archivePurchase(purchase._id)"
               ><VIcon>mdi-delete</VIcon>削除</VBtn
             >
           </td>

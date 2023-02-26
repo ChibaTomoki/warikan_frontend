@@ -3,7 +3,7 @@ import { computed, ref } from 'vue'
 import axios, { AxiosResponse } from 'axios'
 import { useLoadingStore } from '../stores/loading'
 
-type Person = {
+export type Person = {
   _id: string
   name: string
 }

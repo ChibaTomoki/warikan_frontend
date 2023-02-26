@@ -56,13 +56,13 @@ fetchPurchases()
       </div>
     </VCardText>
     <VCardActions>
-      <VBtn elevation="2" @click="repayPurchases(selectedIdList)"
+      <VBtn elevation="2" @click="() => repayPurchases(selectedIdList)"
         ><VIcon>mdi-check-outline</VIcon>精算前に戻す</VBtn
       >
-      <VBtn elevation="2" @click="payPurchases(selectedIdList)"
+      <VBtn elevation="2" @click="() => payPurchases(selectedIdList)"
         ><VIcon>mdi-check</VIcon>精算済に戻す</VBtn
       >
-      <VBtn elevation="2" @click="deletePurchases(selectedIdList)"
+      <VBtn elevation="2" @click="() => deletePurchases(selectedIdList)"
         ><VIcon color="red">mdi-delete</VIcon>完全に削除</VBtn
       >
     </VCardActions>
@@ -91,7 +91,7 @@ fetchPurchases()
           <td>
             <VCheckboxBtn
               :modelValue="selectedIdList"
-              @update:modelValue="toggleSelected(purchase._id)"
+              @update:modelValue="() => toggleSelected(purchase._id)"
               :value="purchase._id"
             />
           </td>
@@ -106,16 +106,16 @@ fetchPurchases()
             }}
           </td>
           <td>
-            <VBtn @click="repayPurchase(purchase._id)"
+            <VBtn @click="() => repayPurchase(purchase._id)"
               ><VIcon>mdi-check-outline</VIcon>精算前に戻す</VBtn
             >
-            <VBtn @click="showEditPurchaseDialog(purchase._id)"
+            <VBtn @click="() => showEditPurchaseDialog(purchase._id)"
               ><VIcon>mdi-square-edit-outline</VIcon>編集</VBtn
             >
-            <VBtn @click="payPurchase(purchase._id)"
+            <VBtn @click="() => payPurchase(purchase._id)"
               ><VIcon>mdi-check</VIcon>精算済に戻す</VBtn
             >
-            <VBtn @click="deletePurchase(purchase._id)"
+            <VBtn @click="() => deletePurchase(purchase._id)"
               ><VIcon color="red">mdi-delete</VIcon>完全に削除</VBtn
             >
           </td>
@@ -126,6 +126,10 @@ fetchPurchases()
   <PurchaseEditDialog
     :isOpen="showsPurchaseEditDialog"
     :purchaseId="idToEditPurchase"
-    @close="showsPurchaseEditDialog = false"
+    @close="
+      () => {
+        showsPurchaseEditDialog = false
+      }
+    "
   />
 </template>
