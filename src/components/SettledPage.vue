@@ -3,7 +3,7 @@ import { storeToRefs } from 'pinia'
 import { usePurchasesStore } from '../stores/purchases'
 import { useLoadingStore } from '../stores/loading'
 import PurchaseEditDialog from './PurchaseEditDialog.vue'
-import { useInputPurchases } from './InputPurchases'
+import { useInputPurchases } from '../composables/InputPurchases'
 
 const {
   archivePurchase,
