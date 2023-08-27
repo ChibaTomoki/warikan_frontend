@@ -85,8 +85,8 @@ const addPurchase = async () => {
   if (canSubmit.value === false) return
 
   try {
-    if (!name.value) throw '購入品が不正です'
-    if (!date.value) throw '日付が不正です'
+    if (!name.value) throw new Error('購入品が不正です')
+    if (!date.value) throw new Error('日付が不正です')
     await postPurchase(
       name.value,
       date.value,

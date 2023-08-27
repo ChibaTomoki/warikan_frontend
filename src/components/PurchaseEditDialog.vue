@@ -73,8 +73,8 @@ const submit = async () => {
   if (isValid.value === false) return
 
   try {
-    if (!formValue.value.name) throw '購入品が不正です'
-    if (!formValue.value.date) throw '日付が不正です'
+    if (!formValue.value.name) throw new Error('購入品が不正です') 
+    if (!formValue.value.date) throw new Error('日付が不正です') 
     await editPurchase(props.purchaseId, {
       date: formValue.value.date,
       name: formValue.value.name,
