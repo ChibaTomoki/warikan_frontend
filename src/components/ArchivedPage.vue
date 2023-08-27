@@ -73,7 +73,7 @@ fetchPurchases()
   <VTable v-else>
     <thead>
       <tr>
-        <th>
+        <th class="check-cell">
           <VCheckboxBtn
             :modelValue="selectsAll"
             @update:modelValue="toggleAllSelected"
@@ -106,17 +106,8 @@ fetchPurchases()
             }}
           </td>
           <td>
-            <VBtn @click="() => repayPurchase(purchase._id)"
-              ><VIcon>mdi-check-outline</VIcon>精算前に戻す</VBtn
-            >
             <VBtn @click="() => showEditPurchaseDialog(purchase._id)"
               ><VIcon>mdi-square-edit-outline</VIcon>編集</VBtn
-            >
-            <VBtn @click="() => payPurchase(purchase._id)"
-              ><VIcon>mdi-check</VIcon>精算済に戻す</VBtn
-            >
-            <VBtn @click="() => deletePurchase(purchase._id)"
-              ><VIcon color="red">mdi-delete</VIcon>完全に削除</VBtn
             >
           </td>
         </template>
@@ -133,3 +124,9 @@ fetchPurchases()
     "
   />
 </template>
+
+<style scoped>
+.check-cell {
+  width: 20px;
+}
+</style>
