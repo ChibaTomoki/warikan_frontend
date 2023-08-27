@@ -68,7 +68,7 @@ fetchPurchases()
   <VTable v-else>
     <thead>
       <tr>
-        <th class="check-cell">
+        <th class="pa-0">
           <VCheckboxBtn
             :modelValue="selectsAll"
             @update:modelValue="toggleAllSelected"
@@ -83,7 +83,7 @@ fetchPurchases()
     <tbody>
       <tr v-for="purchase in getPurchases" :key="purchase._id">
         <template v-if="purchase.stage === 'Unsettled'">
-          <td>
+          <td class="pa-0">
             <VCheckboxBtn
               :modelValue="selectedIdList"
               @update:modelValue="toggleSelected(purchase._id)"
@@ -115,9 +115,3 @@ fetchPurchases()
     @close="showsPurchaseEditDialog = false"
   />
 </template>
-
-<style scoped>
-.check-cell {
-  width: 20px;
-}
-</style>
