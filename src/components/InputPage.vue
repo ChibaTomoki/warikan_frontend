@@ -125,7 +125,7 @@ const addPersonByEnter = (e: Event) => {
 }
 const isNumber = (value: string): boolean => /^\d+$/.test(value)
 const hasFirstZero = (value: string): boolean => /^0/.test(value)
-const paidOnInput = (id: string, value: string) => {
+const updatePaid = (id: string, value: string) => {
   const target = purchasePeople.value.find((person) => person._id === id)
   if (!target) return
 
@@ -138,7 +138,7 @@ const paidOnInput = (id: string, value: string) => {
     person.toPay = String(aliquotToPay.value + OneOrZero)
   })
 }
-const toPayOnInput = (id: string, value: string) => {
+const updateToPay = (id: string, value: string) => {
   const target = purchasePeople.value.find((person) => person._id === id)
   if (!target) return
 
@@ -201,7 +201,7 @@ fetchPurchases()
                 (v) =>
                   !v || v.length < 16 || '文字数は15文字以下にしてください',
               ]"
-              @update:model-value="(value) => paidOnInput(person._id, value)"
+              @update:model-value="(value) => updatePaid(person._id, value)"
               clearable
               inputmode="numeric"
               placeholder="0"
@@ -240,7 +240,7 @@ fetchPurchases()
                 paidSum === toPaySum ||
                   '支払額と割勘金額の合計が一致していません',
               ]"
-              @update:model-value="(value) => toPayOnInput(person._id, value)"
+              @update:model-value="(value) => updateToPay(person._id, value)"
               clearable
               inputmode="numeric"
               placeholder="0"
