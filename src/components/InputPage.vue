@@ -137,18 +137,12 @@ const paidOnInput = (id: string, value: string) => {
     if (OneOrZero) remainder--
     person.toPay = String(aliquotToPay.value + OneOrZero)
   })
-  if (!formRef.value) return
-
-  formRef.value.resetValidation()
 }
 const toPayOnInput = (id: string, value: string) => {
   const target = purchasePeople.value.find((person) => person._id === id)
   if (!target) return
 
   target.toPay = value
-  if (!formRef.value) return
-
-  formRef.value.resetValidation()
 }
 
 fetchPeople()
