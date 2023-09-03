@@ -73,8 +73,8 @@ const submit = async () => {
   if (isValid.value === false) return
 
   try {
-    if (!formValue.value.name) throw new Error('購入品が不正です') 
-    if (!formValue.value.date) throw new Error('日付が不正です') 
+    if (!formValue.value.name) throw new Error('購入品が不正です')
+    if (!formValue.value.date) throw new Error('日付が不正です')
     await editPurchase(props.purchaseId, {
       date: formValue.value.date,
       name: formValue.value.name,
@@ -100,7 +100,7 @@ const submit = async () => {
     @update:model-value="() => emits('close')"
   >
     <VSheet class="pa-4">
-      <VForm v-model="isValid" ref="formRef">
+      <VForm ref="formRef" v-model="isValid" @submit.prevent="submit">
         <VTextField
           clearable
           label="購入品"
@@ -190,9 +190,9 @@ const submit = async () => {
           </VCard>
         </template>
         <VBtn
+          type="submit"
           color="green"
           :disabled="isValid === false || getIsLoading"
-          @click="submit"
           >編集完了</VBtn
         >
         <VBtn @click="() => emits('close')">キャンセル</VBtn>
