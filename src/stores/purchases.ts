@@ -4,7 +4,7 @@ import axios, { AxiosResponse } from 'axios'
 import { useLoadingStore } from '../stores/loading'
 import { Person } from './people'
 
-export type Stage = 'Unsettled' | 'Settled' | 'Archived'
+export type Stage = 'unsettled' | 'settled' | 'archived'
 export type Purchaser = Person & {
   paid: string
   toPay: string
@@ -32,10 +32,10 @@ export const usePurchasesStore = defineStore('purchases', () => {
   })
   const { finishLoading, startLoading } = useLoadingStore()
 
-  const fetchPurchases = async () => {
+  const fetchPurchases = async (stage?: Stage) => {
     startLoading()
     const res: AxiosResponse<Purchase[]> = await axios.get(
-      `${import.meta.env.VITE_API_URL}/api/v1/purchases`
+      `${import.meta.env.VITE_API_URL}/api/v1/purchases${stage}`
     )
     finishLoading()
     purchases.value = res.data
@@ -52,7 +52,7 @@ export const usePurchasesStore = defineStore('purchases', () => {
       name,
       note,
       people,
-      stage: 'Unsettled',
+      stage: 'unsettled',
     })
     await fetchPurchases()
     finishLoading()
@@ -62,7 +62,7 @@ export const usePurchasesStore = defineStore('purchases', () => {
     await axios.patch(
       `${import.meta.env.VITE_API_URL}/api/v1/purchases/${id}`,
       {
-        stage: 'Settled',
+        stage: 'settled',
       }
     )
     await fetchPurchases()
@@ -73,7 +73,7 @@ export const usePurchasesStore = defineStore('purchases', () => {
     await axios.patch(`${import.meta.env.VITE_API_URL}/api/v1/purchases`, {
       idList,
       target: {
-        stage: 'Settled',
+        stage: 'settled',
       },
     })
     await fetchPurchases()
@@ -84,7 +84,7 @@ export const usePurchasesStore = defineStore('purchases', () => {
     await axios.patch(
       `${import.meta.env.VITE_API_URL}/api/v1/purchases/${id}`,
       {
-        stage: 'Archived',
+        stage: 'archived',
       }
     )
     await fetchPurchases()
@@ -95,7 +95,7 @@ export const usePurchasesStore = defineStore('purchases', () => {
     await axios.patch(`${import.meta.env.VITE_API_URL}/api/v1/purchases`, {
       idList: idList,
       target: {
-        stage: 'Archived',
+        stage: 'archived',
       },
     })
     await fetchPurchases()
@@ -106,7 +106,7 @@ export const usePurchasesStore = defineStore('purchases', () => {
     await axios.patch(
       `${import.meta.env.VITE_API_URL}/api/v1/purchases/${id}`,
       {
-        stage: 'Unsettled',
+        stage: 'unsettled',
       }
     )
     await fetchPurchases()
@@ -117,7 +117,7 @@ export const usePurchasesStore = defineStore('purchases', () => {
     await axios.patch(`${import.meta.env.VITE_API_URL}/api/v1/purchases`, {
       idList,
       target: {
-        stage: 'Unsettled',
+        stage: 'unsettled',
       },
     })
     await fetchPurchases()

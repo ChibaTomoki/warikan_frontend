@@ -5,9 +5,9 @@ import UnsettledPage from './components/UnsettledPage.vue'
 import SettledPage from './components/SettledPage.vue'
 import ArchivedPage from './components/ArchivedPage.vue'
 
-type TabName = 'Input' | 'Unsettled' | 'Settled' | 'Archived'
+type TabName = 'input' | 'unsettled' | 'settled' | 'archived'
 
-const shownTab = ref<TabName>('Input')
+const shownTab = ref<TabName>('input')
 // TODO: 初めて開くページでfetchPurchasesを行うように修正
 // TODO: 完全に削除で確認ダイアログを出す
 // TODO: ツールチップでより詳細な情報を表示
@@ -20,13 +20,13 @@ const shownTab = ref<TabName>('Input')
         <VWindowItem value="Input">
           <InputPage />
         </VWindowItem>
-        <VWindowItem value="Unsettled">
+        <VWindowItem value="unsettled">
           <UnsettledPage />
         </VWindowItem>
-        <VWindowItem value="Settled">
+        <VWindowItem value="settled">
           <SettledPage />
         </VWindowItem>
-        <VWindowItem value="Archived">
+        <VWindowItem value="archived">
           <ArchivedPage />
         </VWindowItem>
       </VWindow>
@@ -36,15 +36,15 @@ const shownTab = ref<TabName>('Input')
         <v-icon>mdi-pencil</v-icon>
         入力欄
       </v-btn>
-      <v-btn value="Unsettled">
+      <v-btn value="unsettled">
         <v-icon>mdi-check-outline</v-icon>
         未精算
       </v-btn>
-      <v-btn value="Settled">
+      <v-btn value="settled">
         <v-icon>mdi-check-bold</v-icon>
         精算済
       </v-btn>
-      <v-btn value="Archived">
+      <v-btn value="archived">
         <v-icon>mdi-delete</v-icon>
         削除済
       </v-btn>

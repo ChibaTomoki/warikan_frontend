@@ -24,7 +24,7 @@ const {
   showsPurchaseEditDialog,
   toggleAllSelected,
   toggleSelected,
-} = useInputPurchases('Unsettled')
+} = useInputPurchases('unsettled')
 
 fetchPurchases()
 </script>
@@ -82,7 +82,7 @@ fetchPurchases()
     </thead>
     <tbody>
       <tr v-for="purchase in getPurchases" :key="purchase._id">
-        <template v-if="purchase.stage === 'Unsettled'">
+        <template v-if="purchase.stage === 'unsettled'">
           <td class="pa-0">
             <VCheckboxBtn
               :modelValue="selectedIdList"

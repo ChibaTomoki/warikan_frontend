@@ -32,7 +32,7 @@ const formValue = ref<Partial<Purchase> & { people: Purchaser[] }>({
   name: undefined,
   note: undefined,
   people: [],
-  stage: 'Unsettled',
+  stage: 'unsettled',
 })
 
 const paidSum = computed<number>(() =>

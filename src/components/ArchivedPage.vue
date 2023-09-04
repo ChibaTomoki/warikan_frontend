@@ -26,7 +26,7 @@ const {
   showsPurchaseEditDialog,
   toggleAllSelected,
   toggleSelected,
-} = useInputPurchases('Archived')
+} = useInputPurchases('archived')
 
 fetchPurchases()
 </script>
@@ -87,7 +87,7 @@ fetchPurchases()
     </thead>
     <tbody>
       <tr v-for="purchase in getPurchases" :key="purchase._id">
-        <template v-if="purchase.stage === 'Archived'">
+        <template v-if="purchase.stage === 'archived'">
           <td class="pa-0">
             <VCheckboxBtn
               :modelValue="selectedIdList"
