@@ -33,14 +33,14 @@ const {
         <template v-if="selectedPurchase.toPay < 0">
           <span style="font-size: 1.3rem">{{ selectedPurchase.name }}</span>
           <span>の</span>
-          <span style="font-size: 1.3rem">受取る額：</span>
+          <span style="font-size: 1.3rem">受取る予定だった額：</span>
           <span style="font-size: 1.3rem">{{ -selectedPurchase.toPay }}</span>
           円
         </template>
         <template v-else>
           <span style="font-size: 1.3rem">{{ selectedPurchase.name }}</span>
           <span>の</span>
-          <span style="font-size: 1.3rem">支払う額：</span>
+          <span style="font-size: 1.3rem">支払う予定だった額：</span>
           <span style="font-size: 1.3rem">{{ selectedPurchase.toPay }}</span> 円
         </template>
       </div>
