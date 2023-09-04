@@ -5,15 +5,8 @@ import { useLoadingStore } from '../stores/loading'
 import PurchaseEditDialog from './PurchaseEditDialog.vue'
 import { useInputPurchases } from '../composables/InputPurchases'
 
-const {
-  deletePurchase,
-  deletePurchases,
-  fetchPurchases,
-  payPurchase,
-  payPurchases,
-  repayPurchase,
-  repayPurchases,
-} = usePurchasesStore()
+const { deletePurchases, fetchPurchases, payPurchases, repayPurchases } =
+  usePurchasesStore()
 const { getPurchases } = storeToRefs(usePurchasesStore())
 const { getIsLoading } = storeToRefs(useLoadingStore())
 

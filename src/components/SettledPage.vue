@@ -5,13 +5,7 @@ import { useLoadingStore } from '../stores/loading'
 import PurchaseEditDialog from './PurchaseEditDialog.vue'
 import { useInputPurchases } from '../composables/InputPurchases'
 
-const {
-  archivePurchase,
-  archivePurchases,
-  fetchPurchases,
-  repayPurchase,
-  repayPurchases,
-} = usePurchasesStore()
+const { archivePurchases, fetchPurchases, repayPurchases } = usePurchasesStore()
 const { getPurchases } = storeToRefs(usePurchasesStore())
 const { getIsLoading } = storeToRefs(useLoadingStore())
 
