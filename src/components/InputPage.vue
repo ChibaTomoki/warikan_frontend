@@ -17,7 +17,7 @@ type PurchaserForInput = Person & {
 
 const { deletePerson, fetchPeople, postPerson } = usePeopleStore()
 const { getPeople } = storeToRefs(usePeopleStore())
-const { fetchPurchases, postPurchase } = usePurchasesStore()
+const { postPurchase } = usePurchasesStore()
 const { getPurchasePeople } = storeToRefs(usePurchasesStore())
 const { getIsLoading } = storeToRefs(useLoadingStore())
 const formRef = ref<{
@@ -146,7 +146,6 @@ const updateToPay = (id: string, value: string) => {
 }
 
 fetchPeople()
-fetchPurchases()
 </script>
 
 <template>

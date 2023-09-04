@@ -35,7 +35,12 @@ export const usePurchasesStore = defineStore('purchases', () => {
   const fetchPurchases = async (stage?: Stage) => {
     startLoading()
     const res: AxiosResponse<Purchase[]> = await axios.get(
-      `${import.meta.env.VITE_API_URL}/api/v1/purchases${stage}`
+      `${import.meta.env.VITE_API_URL}/api/v1/purchases`,
+      {
+        params: {
+          stage,
+        },
+      }
     )
     finishLoading()
     purchases.value = res.data

@@ -5,7 +5,7 @@ import { useLoadingStore } from '../stores/loading'
 import PurchaseEditDialog from './PurchaseEditDialog.vue'
 import { useInputPurchases } from '../composables/InputPurchases'
 
-const { archivePurchases, fetchPurchases, repayPurchases } = usePurchasesStore()
+const { archivePurchases, repayPurchases } = usePurchasesStore()
 const { getPurchases } = storeToRefs(usePurchasesStore())
 const { getIsLoading } = storeToRefs(useLoadingStore())
 
@@ -19,8 +19,6 @@ const {
   toggleAllSelected,
   toggleSelected,
 } = useInputPurchases('settled')
-
-fetchPurchases()
 </script>
 
 <template>
@@ -76,30 +74,28 @@ fetchPurchases()
     </thead>
     <tbody>
       <tr v-for="purchase in getPurchases" :key="purchase._id">
-        <template v-if="purchase.stage === 'settled'">
-          <td class="pa-0">
-            <VCheckboxBtn
-              :modelValue="selectedIdList"
-              @update:modelValue="toggleSelected(purchase._id)"
-              :value="purchase._id"
-            />
-          </td>
-          <td>{{ purchase.name }}</td>
-          <td>{{ purchase.date }}</td>
-          <td>
-            {{
-              purchase.people.reduce(
-                (previous, current) => previous + Number(current.paid),
-                0
-              )
-            }}
-          </td>
-          <td>
-            <VBtn @click="() => showEditPurchaseDialog(purchase._id)"
-              ><VIcon>mdi-square-edit-outline</VIcon>編集</VBtn
-            >
-          </td>
-        </template>
+        <td class="pa-0">
+          <VCheckboxBtn
+            :modelValue="selectedIdList"
+            @update:modelValue="toggleSelected(purchase._id)"
+            :value="purchase._id"
+          />
+        </td>
+        <td>{{ purchase.name }}</td>
+        <td>{{ purchase.date }}</td>
+        <td>
+          {{
+            purchase.people.reduce(
+              (previous, current) => previous + Number(current.paid),
+              0
+            )
+          }}
+        </td>
+        <td>
+          <VBtn @click="() => showEditPurchaseDialog(purchase._id)"
+            ><VIcon>mdi-square-edit-outline</VIcon>編集</VBtn
+          >
+        </td>
       </tr>
     </tbody>
   </VTable>

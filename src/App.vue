@@ -4,11 +4,17 @@ import InputPage from './components/InputPage.vue'
 import UnsettledPage from './components/UnsettledPage.vue'
 import SettledPage from './components/SettledPage.vue'
 import ArchivedPage from './components/ArchivedPage.vue'
+import { watch } from 'vue'
+import { usePurchasesStore } from './stores/purchases'
 
 type TabName = 'input' | 'unsettled' | 'settled' | 'archived'
 
 const shownTab = ref<TabName>('input')
-// TODO: 初めて開くページでfetchPurchasesを行うように修正
+const { fetchPurchases } = usePurchasesStore()
+watch(shownTab, async () => {
+  if (shownTab.value === 'input') return
+  await fetchPurchases(shownTab.value)
+})
 // TODO: 完全に削除で確認ダイアログを出す
 // TODO: ツールチップでより詳細な情報を表示
 </script>
