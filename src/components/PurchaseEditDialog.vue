@@ -19,13 +19,14 @@ const { getPurchases } = storeToRefs(usePurchasesStore())
 const { editPurchase } = usePurchasesStore()
 const { getIsLoading } = storeToRefs(useLoadingStore())
 
-let targetPurchase = getPurchases.value.find(
-  (purchase) => purchase._id === props.purchaseId
-)
 const isValid = ref(null)
 const formRef = ref<{
-  validate: () => Promise<void>
-  reset: () => Promise<void>
+  validate: () => Promise<{
+    valid: boolean
+    errors: { id: string | number; errorMessages: string[] }[]
+  }>
+  reset: () => void
+  resetValidation: () => void
 }>()
 const formValue = ref<Partial<Purchase> & { people: Purchaser[] }>({
   date: undefined,
@@ -51,7 +52,7 @@ const toPaySum = computed<number>(() =>
 watch(
   () => props.isOpen,
   () => {
-    targetPurchase = getPurchases.value.find(
+    const targetPurchase = getPurchases.value.find(
       (purchase) => purchase._id === props.purchaseId
     )
     if (!targetPurchase) return
@@ -70,7 +71,8 @@ const submit = async () => {
   if (!form) return
 
   await form.validate()
-  if (isValid.value === false) return
+  if (isValid.value === false)
+    throw new Error('押せないはずのボタンが押せています')
 
   try {
     if (!formValue.value.name) throw new Error('購入品が不正です')
@@ -149,7 +151,13 @@ const submit = async () => {
                   inputmode="numeric"
                   placeholder="0"
                   suffix="円"
-                  v-model="person.paid"
+                  :model-value="person.paid"
+                  @update:model-value="
+                    (value) => {
+                      person.paid = value
+                      formRef?.validate()
+                    }
+                  "
                 />
               </div>
             </VCardText>
@@ -183,7 +191,13 @@ const submit = async () => {
                   inputmode="numeric"
                   placeholder="0"
                   suffix="円"
-                  v-model="person.toPay"
+                  :model-value="person.toPay"
+                  @update:model-value="
+                    (value) => {
+                      person.toPay = value
+                      formRef?.validate()
+                    }
+                  "
                 />
               </div>
             </VCardText>

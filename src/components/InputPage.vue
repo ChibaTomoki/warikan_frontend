@@ -21,9 +21,12 @@ const { postPurchase } = usePurchasesStore()
 const { getPurchasePeople } = storeToRefs(usePurchasesStore())
 const { getIsLoading } = storeToRefs(useLoadingStore())
 const formRef = ref<{
-  validate: () => Promise<void>
-  reset: () => Promise<void>
-  resetValidation: () => Promise<void>
+  validate: () => Promise<{
+    valid: boolean
+    errors: { id: string | number; errorMessages: string[] }[]
+  }>
+  reset: () => void
+  resetValidation: () => void
 }>()
 const addPersonFormRef = ref<{
   validate: () => Promise<void>
@@ -98,7 +101,7 @@ const addPurchase = async () => {
       }))
     )
     showsPostedSnackbar.value = true
-    await form.reset()
+    form.reset()
     date.value = todayAsString
   } catch (error) {
     console.log(error)
@@ -143,6 +146,7 @@ const updateToPay = (id: string, value: string) => {
   if (!target) return
 
   target.toPay = value
+  formRef.value?.validate()
 }
 
 fetchPeople()
@@ -239,7 +243,12 @@ fetchPeople()
                 paidSum === toPaySum ||
                   '支払額と割勘金額の合計が一致していません',
               ]"
-              @update:model-value="(value) => updateToPay(person._id, value)"
+              @update:model-value="
+                (value) => {
+                  updateToPay(person._id, value)
+                  formRef?.validate()
+                }
+              "
               clearable
               inputmode="numeric"
               placeholder="0"
