@@ -2,6 +2,9 @@ import { storeToRefs } from 'pinia'
 import { computed, ref } from 'vue'
 import { Stage, usePurchasesStore } from '../stores/purchases'
 
+const capitalizeFirstLetter = (value: string) =>
+  value.charAt(0).toUpperCase() + value.slice(1)
+
 export const useInputPurchases = (stage: Stage) => {
   const { getPurchasePeople, getPurchases } = storeToRefs(usePurchasesStore())
 
@@ -9,8 +12,9 @@ export const useInputPurchases = (stage: Stage) => {
   const selectsAll = computed<boolean>(
     () =>
       selectedIdList.value.length ===
-        getPurchases.value.filter((x) => x.stage === stage).length &&
-      !!selectedIdList.value.length
+        getPurchases.value.filter(
+          (x) => x.stage === stage || capitalizeFirstLetter(stage)
+        ).length && !!selectedIdList.value.length
   )
   const selectedPurchases = computed<
     { _id: string; name: string; toPay: number }[]
@@ -35,7 +39,9 @@ export const useInputPurchases = (stage: Stage) => {
     if (selectsAll.value) selectedIdList.value = []
     else
       selectedIdList.value = getPurchases.value
-        .filter((purchase) => purchase.stage === stage)
+        .filter(
+          (purchase) => purchase.stage === stage || capitalizeFirstLetter(stage)
+        )
         .map((purchase) => purchase._id)
   }
   const toggleSelected = (id: string) => {
